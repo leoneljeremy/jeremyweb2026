@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Videojuego{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f5f5f5;
+    }
+
+    .editar-container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .editar-container h1 {
+        text-align: center;
+        color: #1e3c72;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.05em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1em;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #1e3c72;
+        box-shadow: 0 0 5px rgba(30, 60, 114, 0.3);
+    }
+
+    .form-group input[type="number"] {
+        font-size: 1em;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .btn-guardar {
+        background-color: #27ae60;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.05em;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-guardar:hover {
+        background-color: #219a52;
+    }
+
+    .btn-cancelar {
+        background-color: #e74c3c;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.05em;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancelar:hover {
+        background-color: #c0392b;
+    }
+
+    .readonly-field {
+        background-color: #f0f0f0;
+        color: #666;
+    }
+
+    .form-info {
+        background-color: #e7f3ff;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 3px;
+        color: #1e3c72;
+        font-size: 0.95em;
+    }
+
+    .form-group input[type="file"] {
+        padding: 8px;
+    }
+</style>
+
+<div class="editar-container">
+    <h1>Editar Videojuego</h1>
+    
+    <div class="form-info" style="background-color: #fff3cd; border-left-color: #ffc107; color: #1e3c72;">
+        <strong>⚠️ Portada del Juego:</strong><br>
+        Si deseas cambiar la portada, el archivo DEBE llamarse exactamente igual que el nuevo nombre del juego.<br>
+        <strong>Ejemplo:</strong> Para "The Witcher 3", el archivo será "The Witcher 3.PNG"
+    </div>
+    
+    <form method="POST" action="/editar-juego" enctype="multipart/form-data">
+        <input type="hidden" name="videojuego_id" value="{{ juego.id }}">
+        
+        <div class="form-group">
+            <label for="id">ID del Juego:</label>
+            <input type="text" id="id" value="{{ juego.id }}" disabled class="readonly-field">
+        </div>
+
+        <div class="form-group">
+            <label for="nombre">Nombre del Juego:</label>
+            <input type="text" id="nombre" name="nombre" value="{{ juego.nombre }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="portada">🗸️ Portada del Juego (PNG) - Opcional</label>
+            <input type="file" id="portada" name="portada" accept=".png,.PNG">
+        </div>
+
+        <div class="form-group">
+            <label for="precio">Precio (€):</label>
+            <input type="number" id="precio" name="precio" value="{{ juego.precio }}" step="0.01" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="genero">Género:</label>
+            <input type="text" id="genero" name="genero" value="{{ juego.genero }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="valoracion">Valoración (0-10):</label>
+            <input type="number" id="valoracion" name="valoracion" value="{{ juego.valoracion }}" step="0.1" min="0" max="10" required>
+        </div>
+
+        <div class="form-group">
+            <label for="consolas">🕹️ Consolas (Selecciona una o varias)</label>
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="PlayStation" {% if "PlayStation" in consolas_actuales %}checked{% endif %} style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        PlayStation
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="Xbox" {% if "Xbox" in consolas_actuales %}checked{% endif %} style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        Xbox
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="Switch" {% if "Switch" in consolas_actuales %}checked{% endif %} style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        Switch
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="Steam" {% if "Steam" in consolas_actuales %}checked{% endif %} style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        Steam
+                    </label>
+                </div>
+            </div>
+            <p style="color: #666; font-size: 0.9em; margin-top: 8px;">ℹ️ Puedes seleccionar varias consolas si el juego está disponible en múltiples plataformas</p>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-guardar">💾 Guardar Cambios</button>
+            <a href="/videojuegos" class="btn-cancelar">❌ Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

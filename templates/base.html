@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #d3d3d3;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        nav {
+            background: linear-gradient(90deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e94560;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 15px;
+            margin: 0;
+        }
+
+        nav .user-section {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        nav .user-section span {
+            color: #ffffff;
+            padding: 0 5px;
+        }
+
+        nav li {
+            margin: 0;
+        }
+
+        nav .nav-icon {
+            height: 50px;
+            width: auto;
+            margin-right: 15px;
+            display: none;
+        }
+
+        nav a {
+            display: block;
+            color:  white;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 0.9em;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+        }
+
+        nav a:hover {
+            background-color: #e94560;
+            border-bottom-color: #00d4ff;
+            color: #ffffff;
+        }
+
+        nav a.active {
+            background-color: #e94560;
+            color: #ffffff;
+            border-bottom-color: #00d4ff;
+        }
+
+        .container {
+            padding: 20px;
+            background-color: #d3d3d3;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        th {
+            background: #1e3c72;
+            color: white;
+        }
+
+        a {
+            color: #09e10d;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .index {
+            display: block;
+            margin: 20px 0;
+            color: #09e10d;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #f30000;
+            text-decoration: none;
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 500px;
+            margin: 30px auto;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #667eea;
+        }
+
+        .header-banner {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            border-bottom: 3px solid #e94560;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-logo {
+            font-size: 3em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header-banner h1 {
+            margin: 0;
+            font-size: 2.8em;
+            color: #ffffff;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+            font-weight: bold;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #00d4ff, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-tagline {
+            margin: 8px 0 0 0;
+            font-size: 1em;
+            color: #00d4ff;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-banner">
+        <div class="header-content">
+            <div class="header-logo">🎮</div>
+            <div>
+                <h1>GamerG</h1>
+                <p class="header-tagline">Tu Tienda Oficial de Videojuegos</p>
+            </div>
+        </div>
+    </div>
+    {% block nav %}
+    <nav>
+        <ul>
+            <img id="navIcon" class="nav-icon" alt="Console Icon">
+            <li><a href="/videojuegos">Videojuegos</a></li>
+            <li><a href="/playstation">Playstation</a></li>
+            <li><a href="/xbox">Xbox</a></li>
+            <li><a href="/switch">Switch</a></li>
+            <li><a href="/steam">Steam</a></li>
+        </ul>
+        
+        <form action="/buscar" method="get" style="display: flex; background-color: #16213e; align-items: center; margin: 0 15px; gap: 5px;">
+            <input type="text" name="nombre" placeholder="Buscar videojuegos..." style="width: 140px; padding: 8px 12px; border-radius: 3px; border: 2px solid #e94560; background-color: #ffffff; color: #333; margin: 0; font-size: 0.85em;">
+            <button type="submit" style="padding: 8px 14px; background-color: #e94560; color: white; border: none; border-radius: 3px; cursor: pointer; width: auto; margin: 0; font-size: 0.85em; font-weight: bold; transition: background-color 0.3s;">🔍</button>
+        </form>
+        
+        <div class="user-section">
+            {% if request.session.get("usuario_id") %}
+                <a href="/carrito" style="padding: 15px 20px; background-color: #e94560; border-radius: 5px; color: white; text-decoration: none; font-weight: bold;">
+                    🛒 Carrito 
+                    <span style="background-color: #00d4ff; color: #1a1a2e; padding: 2px 8px; border-radius: 3px; margin-left: 5px; font-weight: bold;">
+                        {{ request.session.get("carrito_count", 0) }}
+                    </span>
+                </a>
+                <span style="color: #00d4ff; font-weight: bold;">{{ request.session.get("usuario_nombre") }}</span>
+                <a href="/logout" style="padding: 15px 20px;">Cerrar Sesión</a>
+            {% else %}
+                <a href="/login" style="padding: 15px 20px;">Iniciar Sesión</a>
+                <a href="/registro" style="padding: 15px 20px; background-color: #e94560;">Registrarse</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <script>
+        function toggleNavIcon() {
+            const navIcon = document.getElementById('navIcon');
+            const url = window.location.pathname;
+            
+            if (url.includes('/playstation')) {
+                navIcon.src = '/static/nav-playstation.PNG';
+                navIcon.style.display = 'block';
+            } else if (url.includes('/xbox')) {
+                navIcon.src = '/static/nav-xbox.PNG';
+                navIcon.style.display = 'block';
+            } else if (url.includes('/switch')) {
+                navIcon.src = '/static/nav-switch.PNG';
+                navIcon.style.display = 'block';
+            } else if (url.includes('/steam')) {
+                navIcon.src = '/static/nav-steam.PNG';
+                navIcon.style.display = 'block';
+            } else {
+                navIcon.style.display = 'none';
+            }
+        }
+        
+        toggleNavIcon();
+    </script>
+    {% endblock %}
+
+    <div class="container">
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Carrito de Compras{% endblock %}
+
+{% block content %}
+<style>
+    .carrito-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .carrito-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .carrito-header h1 {
+        color: #1e3c72;
+        font-size: 2em;
+        margin: 0 0 10px 0;
+    }
+
+    .carrito-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+
+    .carrito-table th {
+        background-color: #1e3c72;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .carrito-table td {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .carrito-table tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .imagen-producto {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .btn-eliminar {
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+    }
+
+    .btn-eliminar:hover {
+        background-color: #e53e3e;
+    }
+
+    .carrito-empty {
+        text-align: center;
+        padding: 50px 20px;
+        color: #1e3c72;
+    }
+
+    .carrito-empty img {
+        width: 100px;
+        opacity: 0.5;
+        margin-bottom: 20px;
+    }
+
+    .carrito-empty p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .carrito-summary {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 30px;
+        text-align: right;
+    }
+
+    .carrito-summary h2 {
+        color: #1e3c72;
+        margin: 0 0 15px 0;
+    }
+
+    .carrito-total {
+        font-size: 1.5em;
+        color: #4CAF50;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .carrito-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s;
+    }
+
+    .btn-comprar {
+        background-color: #4CAF50;
+        color: white;
+        font-size: 1.1em;
+    }
+
+    .btn-comprar:hover {
+        background-color: #45a049;
+    }
+
+    .btn-limpiar {
+        background-color: #ff6b6b;
+        color: white;
+    }
+
+    .btn-limpiar:hover {
+        background-color: #e53e3e;
+    }
+
+    .btn-continuar {
+        background-color: #667eea;
+        color: white;
+    }
+
+    .btn-continuar:hover {
+        background-color: #5568d3;
+    }
+</style>
+
+<div class="carrito-container">
+    <div class="carrito-header">
+        <h1>🛒 Carrito de Compras</h1>
+        <p>Usuario: {{ request.session.get("usuario_nombre") }}</p>
+    </div>
+
+    {% if carrito %}
+        <table class="carrito-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Imagen</th>
+                    <th>Nombre</th>
+                    <th style="width: 100px;">Precio</th>
+                    <th style="width: 120px;">Género</th>
+                    <th style="width: 100px;">Valoración</th>
+                    <th style="width: 100px;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in carrito %}
+                <tr>
+                    <td>
+                        <img src="/static/{{ item.nombre }}.PNG" alt="{{ item.nombre }}" class="imagen-producto" onerror="this.src='/static/default-game.PNG'">
+                    </td>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ "%.2f"|format(item.precio) }}€</td>
+                    <td>{{ item.genero }}</td>
+                    <td>{{ item.valoracion }}/10</td>
+                    <td>
+                        <form action="/eliminar-carrito" method="post" style="display: inline; padding: 0;">
+                            <input type="hidden" name="indice" value="{{ loop.index0 }}">
+                            <button type="submit" class="btn-eliminar">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="carrito-summary">
+            <h2>Resumen del Pedido</h2>
+            <p>Total de artículos: <strong>{{ carrito|length }}</strong></p>
+            <div class="carrito-total">
+                Total: {{ "%.2f"|format(total) }}€
+            </div>
+            
+            <div class="carrito-actions">
+                <a href="/videojuegos" class="btn btn-continuar">Continuar Comprando</a>
+                <a href="/limpiar-carrito" class="btn btn-limpiar">Vaciar Carrito</a>
+                <a href="/pago" class="btn btn-comprar">Proceder al Pago</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="carrito-empty">
+            <p>Tu carrito está vacío</p>
+            <p style="font-size: 1em; color: #666;">No hay juegos en tu carrito. ¡Explora nuestro catálogo y empieza a comprar!</p>
+            <a href="/videojuegos" class="btn btn-continuar" style="margin-top: 20px;">Ir a la Tienda</a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

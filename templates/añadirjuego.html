@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Videojuego{% endblock %}
+
+{% block content %}
+<style>
+    .agregar-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .agregar-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .agregar-header h1 {
+        color: #1e3c72;
+        margin: 0 0 10px 0;
+    }
+
+    .agregar-header p {
+        color: #666;
+        margin: 0;
+        font-size: 0.95em;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1e3c72;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    }
+
+    .form-group input[type="file"] {
+        padding: 8px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-row .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+    }
+
+    .btn-submit {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-submit:hover {
+        background-color: #45a049;
+    }
+
+    .btn-cancel {
+        background-color: #ff6b6b;
+        color: white;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e53e3e;
+    }
+
+    .form-info {
+        background-color: #e7f3ff;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 3px;
+        color: #1e3c72;
+        font-size: 0.95em;
+    }
+
+    .form-info strong {
+        display: block;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="agregar-container">
+    <div class="agregar-header">
+        <h1>➕ Agregar Nuevo Videojuego</h1>
+        <p>Completa el formulario para añadir un nuevo juego al catálogo</p>
+    </div>
+
+    <div class="form-info">
+        <strong>Nota:</strong> Todos los campos son obligatorios
+    </div>
+
+    <div class="form-info" style="background-color: #fff3cd; border-left-color: #ffc107;">
+        <strong>⚠️ Importante - Portada del Juego:</strong><br>
+        El archivo de la portada DEBE llamarse exactamente igual que el nombre del juego, incluyendo espacios y mayúsculas, y debe ser formato PNG.<br>
+        <strong>Ejemplo:</strong> Si el juego es "The Witcher 3", la imagen debe llamarse <code style="background: white; padding: 2px 4px; border-radius: 2px;">"The Witcher 3.PNG"</code>
+    </div>
+
+    <form action="/agregar-juego" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="nombre">📝 Nombre del Juego</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ej: The Witcher 3" required>
+        </div>
+
+        <div class="form-group">
+            <label for="portada">🖼️ Portada del Juego (PNG)</label>
+            <input type="file" id="portada" name="portada" accept=".png,.PNG" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="precio">💵 Precio</label>
+                <input type="number" id="precio" name="precio" placeholder="Ej: 59.99" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="valoracion">⭐ Valoración (0-10)</label>
+                <input type="number" id="valoracion" name="valoracion" placeholder="Ej: 8.5" step="0.1" min="0" max="10" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="genero">🎮 Género</label>
+            <select id="genero" name="genero" required>
+                <option value="">Selecciona un género</option>
+                <option value="Acción">Acción</option>
+                <option value="Aventura">Aventura</option>
+                <option value="RPG">RPG</option>
+                <option value="Estrategia">Estrategia</option>
+                <option value="Puzzle">Puzzle</option>
+                <option value="Deportes">Deportes</option>
+                <option value="Carreras">Carreras</option>
+                <option value="Simulación">Simulación</option>
+                <option value="Terror">Terror</option>
+                <option value="Indie">Indie</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="consola">🕹️ Consolas (Selecciona una o varias)</label>
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="PlayStation" style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        PlayStation
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="Xbox" style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        Xbox
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="Switch" style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        Switch
+                    </label>
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" name="consolas" value="Steam" style="width: 18px; height: 18px; cursor: pointer; margin-right: 8px;">
+                        Steam
+                    </label>
+                </div>
+            </div>
+            <p style="color: #666; font-size: 0.9em; margin-top: 8px;">ℹ️ Puedes seleccionar varias consolas si el juego está disponible en múltiples plataformas</p>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-submit">✅ Agregar Juego</button>
+            <a href="/videojuegos" class="btn btn-cancel">❌ Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

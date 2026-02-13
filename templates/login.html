@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .admin-tab {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #e94560;
+        padding: 15px 10px;
+        border-radius: 5px 0 0 5px;
+        cursor: pointer;
+        z-index: 999;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        color: white;
+        font-weight: bold;
+        box-shadow: -2px 2px 8px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+    }
+
+    .admin-tab:hover {
+        padding-right: 15px;
+        box-shadow: -4px 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .admin-panel {
+        position: fixed;
+        right: -350px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        width: 320px;
+        box-shadow: -4px 0 15px rgba(0,0,0,0.3);
+        z-index: 1000;
+        transition: right 0.3s;
+    }
+
+    .admin-panel.active {
+        right: 0;
+    }
+
+    .admin-panel h3 {
+        color: #e94560;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .admin-panel-content {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #e94560;
+    }
+
+    .admin-panel-content p {
+        margin: 10px 0;
+        color: #333;
+        font-size: 0.95em;
+    }
+
+    .admin-panel-content strong {
+        color: #1a1a2e;
+    }
+
+    .admin-panel-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .admin-panel-close:hover {
+        color: #e94560;
+    }
+</style>
+
+<div class="admin-tab" id="adminTab">Para Oscar</div>
+
+<div class="admin-panel" id="adminPanel">
+    <button class="admin-panel-close" id="closeAdmin">&times;</button>
+    <h3>👤 Credenciales Admin</h3>
+    <div class="admin-panel-content">
+        <p><strong>Correo:</strong></p>
+        <p style="background: white; padding: 8px; border-radius: 3px; font-family: monospace; font-size: 0.9em; margin-bottom: 15px;">admin@admin.com</p>
+        
+        <p><strong>Contraseña:</strong></p>
+        <p style="background: white; padding: 8px; border-radius: 3px; font-family: monospace; font-size: 0.9em;">admin</p>
+    </div>
+</div>
+
+<script>
+    const adminTab = document.getElementById('adminTab');
+    const adminPanel = document.getElementById('adminPanel');
+    const closeAdmin = document.getElementById('closeAdmin');
+
+    adminTab.addEventListener('click', function() {
+        adminPanel.classList.toggle('active');
+    });
+
+    closeAdmin.addEventListener('click', function() {
+        adminPanel.classList.remove('active');
+    });
+
+    // Cerrar al hacer clic fuera del panel
+    document.addEventListener('click', function(event) {
+        if (!adminTab.contains(event.target) && !adminPanel.contains(event.target)) {
+            adminPanel.classList.remove('active');
+        }
+    });
+</script>
+
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 50px;">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+                    
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="/login">
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" name="correo" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contraseña" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                    </form>
+                    
+                    <hr>
+                    
+                    <p class="text-center mt-3">
+                        ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

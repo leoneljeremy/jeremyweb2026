@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+
+{% block title %}Formulario de Pago{% endblock %}
+
+{% block content %}
+<style>
+    .pago-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .pago-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .pago-header h1 {
+        color: #1e3c72;
+        margin: 0 0 10px 0;
+    }
+
+    .pago-header p {
+        color: #666;
+        margin: 0;
+        font-size: 0.95em;
+    }
+
+    .pago-resumen {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 30px;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .pago-resumen h3 {
+        color: #1e3c72;
+        margin-top: 0;
+    }
+
+    .pago-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .pago-item:last-child {
+        border-bottom: none;
+    }
+
+    .pago-total {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #4CAF50;
+        margin-top: 10px;
+        text-align: right;
+    }
+
+    .metodo-pago-section {
+        margin-bottom: 30px;
+    }
+
+    .metodo-pago-section h2 {
+        color: #1e3c72;
+        font-size: 1.3em;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e94560;
+    }
+
+    .metodos-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .metodo-opcion {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .metodo-opcion:hover {
+        border-color: #e94560;
+        background-color: #f9f9f9;
+    }
+
+    .metodo-opcion input[type="radio"] {
+        margin-right: 10px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .metodo-opcion label {
+        flex: 1;
+        cursor: pointer;
+        margin: 0;
+        font-weight: bold;
+        color: #1e3c72;
+    }
+
+    .metodo-opcion input[type="radio"]:checked + label {
+        color: #e94560;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1e3c72;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-row .form-group {
+        margin-bottom: 0;
+    }
+
+    .tarjeta-info {
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .tarjeta-info.active {
+        display: block;
+    }
+
+    .tarjeta-preview {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-family: 'Courier New', monospace;
+    }
+
+    .tarjeta-preview-numero {
+        font-size: 1.5em;
+        letter-spacing: 2px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .tarjeta-preview-bottom {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .tarjeta-preview-nombre {
+        font-size: 0.9em;
+        text-transform: uppercase;
+    }
+
+    .tarjeta-preview-cvv {
+        background: rgba(255,255,255,0.3);
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+
+    .otras-formas {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .otras-formas.active {
+        display: block;
+    }
+
+    .forma-pago-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .forma-pago-item:last-child {
+        border-bottom: none;
+    }
+
+    .forma-pago-item p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .pago-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+
+    .btn-procesar {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-procesar:hover {
+        background-color: #45a049;
+    }
+
+    .btn-cancelar {
+        background-color: #ff6b6b;
+        color: white;
+    }
+
+    .btn-cancelar:hover {
+        background-color: #e53e3e;
+    }
+
+    @media (max-width: 600px) {
+        .metodos-container {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .pago-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="pago-container">
+    <div class="pago-header">
+        <h1>💳 Formulario de Pago</h1>
+        <p>Completa tu compra de forma segura</p>
+    </div>
+
+    <!-- Resumen de Compra -->
+    <div class="pago-resumen">
+        <h3>📊 Resumen de tu Compra</h3>
+        <div class="pago-item">
+            <span>Total de artículos:</span>
+            <strong>{{ carrito|length }}</strong>
+        </div>
+        <div class="pago-item">
+            <span>Cantidad de productos:</span>
+            <strong>{{ carrito|length }}</strong>
+        </div>
+        <div class="pago-total">
+            Total a Pagar: {{ "%.2f"|format(total) }}€
+        </div>
+    </div>
+
+    <!-- Aviso de Pago de Prueba -->
+    <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 5px; margin-bottom: 30px;">
+        <strong style="color: #856404;">⚠️ Aviso Importante</strong>
+        <p style="color: #856404; margin: 8px 0 0 0; font-size: 0.95em;">
+            Este es un formulario de <strong>PRUEBA</strong>. No es un pago real. Puedes poner números al azar en los campos de tarjeta. El pago será procesado automáticamente como exitoso.
+        </p>
+    </div>
+
+    <form method="POST" action="/procesar-pago">
+        <!-- Selección de Método de Pago -->
+        <div class="metodo-pago-section">
+            <h2>🏦 Selecciona tu Método de Pago</h2>
+            <div class="metodos-container">
+                <div class="metodo-opcion">
+                    <input type="radio" id="metodo_tarjeta" name="metodo_pago" value="tarjeta" checked onchange="mostrarFormulario()">
+                    <label for="metodo_tarjeta">💳 Tarjeta de Crédito/Débito</label>
+                </div>
+                <div class="metodo-opcion">
+                    <input type="radio" id="metodo_otras" name="metodo_pago" value="otras" onchange="mostrarFormulario()">
+                    <label for="metodo_otras">💰 Otras Formas de Pago</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario Tarjeta -->
+        <div id="formulario-tarjeta" class="tarjeta-info active">
+            <h3 style="color: #1e3c72; margin-top: 0;">Datos de la Tarjeta</h3>
+
+            <div class="tarjeta-preview">
+                <div class="tarjeta-preview-numero" id="preview-numero">•••• •••• •••• ••••</div>
+                <div class="tarjeta-preview-bottom">
+                    <div>
+                        <div style="font-size: 0.7em; opacity: 0.7;">Titular de la Tarjeta</div>
+                        <div class="tarjeta-preview-nombre" id="preview-nombre">Tu Nombre</div>
+                    </div>
+                    <div class="tarjeta-preview-cvv">
+                        <div style="font-size: 0.7em; opacity: 0.9;">CVV</div>
+                        <div id="preview-cvv">•••</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre_titular">Titular de la Tarjeta</label>
+                <input type="text" id="nombre_titular" name="nombre_titular" placeholder="JUAN PÉREZ" onkeyup="actualizarPreview()">
+            </div>
+
+            <div class="form-group">
+                <label for="numero_tarjeta">Número de Tarjeta</label>
+                <input type="text" id="numero_tarjeta" name="numero_tarjeta" placeholder="1234 5678 9012 3456" maxlength="19" onkeyup="formatarNumeroTarjeta(this); actualizarPreview()">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_expiracion">Fecha de Expiración (MM/YY)</label>
+                    <input type="text" id="fecha_expiracion" name="fecha_expiracion" placeholder="12/25" maxlength="5" onkeyup="formatarFecha(this)">
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4" onkeyup="actualizarPreview()" inputmode="numeric">
+                </div>
+            </div>
+        </div>
+
+        <!-- Otras Formas de Pago -->
+        <div id="formulario-otras" class="otras-formas">
+            <h3 style="color: #1e3c72; margin-top: 0;">Otras Formas de Pago Disponibles</h3>
+            <div class="forma-pago-item">
+                <strong>💶 PayPal</strong>
+                <p>Paga de forma segura con tu cuenta de PayPal</p>
+            </div>
+            <div class="forma-pago-item">
+                <strong>🏦 Transferencia Bancaria</strong>
+                <p>Realiza una transferencia directa a nuestra cuenta</p>
+            </div>
+            <div class="forma-pago-item">
+                <strong>📱 Billetera Digital</strong>
+                <p>Google Pay, Apple Pay y otras billeteras digitales</p>
+            </div>
+            <div class="forma-pago-item">
+                <strong>🛍️ Compra Ahora, Paga Después</strong>
+                <p>Servicios como Klarna, Cofidis y más</p>
+            </div>
+            <p style="margin-top: 20px; color: #666; font-size: 0.9em;">
+                ℹ️ Para procesar tu pago por estas formas alternativas, serás redirigido a la plataforma correspondiente.
+            </p>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="pago-actions">
+            <a href="/carrito" class="btn btn-cancelar">Volver al Carrito</a>
+            <button type="submit" class="btn btn-procesar">✅ Confirmar Pago</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function mostrarFormulario() {
+        const metodo = document.querySelector('input[name="metodo_pago"]:checked').value;
+        const formularioTarjeta = document.getElementById('formulario-tarjeta');
+        const formularioOtras = document.getElementById('formulario-otras');
+
+        if (metodo === 'tarjeta') {
+            formularioTarjeta.classList.add('active');
+            formularioOtras.classList.remove('active');
+        } else {
+            formularioTarjeta.classList.remove('active');
+            formularioOtras.classList.add('active');
+        }
+    }
+
+    function formatarNumeroTarjeta(input) {
+        let valor = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let resultado = '';
+        for (let i = 0; i < valor.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                resultado += ' ';
+            }
+            resultado += valor[i];
+        }
+        input.value = resultado;
+    }
+
+    function formatarFecha(input) {
+        let valor = input.value.replace(/[^0-9]/gi, '');
+        if (valor.length >= 2) {
+            valor = valor.substring(0, 2) + '/' + valor.substring(2, 4);
+        }
+        input.value = valor;
+    }
+
+    function actualizarPreview() {
+        const numero = document.getElementById('numero_tarjeta').value.replace(/\s+/g, '');
+        const nombre = document.getElementById('nombre_titular').value || 'Tu Nombre';
+        const cvv = document.getElementById('cvv').value || '•••';
+
+        // Mostrar últimos 4 dígitos de la tarjeta
+        const numeroMascarado = numero.slice(-4).padStart(16, '•');
+        const numeroFormato = numeroMascarado.replace(/(.{4})/g, '$1 ').trim();
+
+        document.getElementById('preview-numero').textContent = numeroFormato;
+        document.getElementById('preview-nombre').textContent = nombre.toUpperCase();
+        document.getElementById('preview-cvv').textContent = cvv;
+    }
+</script>
+
+{% endblock %}

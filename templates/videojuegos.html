@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}GamerG - Página principal{% endblock %}
+
+{% block content %}
+    <style>
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 30px 20px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .game-card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            overflow: hidden;
+        }
+
+        .game-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .game-card-content {
+            padding: 20px;
+        }
+
+        .game-card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .game-card-description {
+            color: #666;
+            font-size: 0.9em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .game-card-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .game-card-button {
+            flex: 1;
+            min-width: 70px;
+            padding: 10px;
+            background-color: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            font-size: 0.85em;
+        }
+
+        .game-card-button:hover {
+            background-color: #667eea;
+        }
+
+        .game-card-button.edit {
+            background-color: #2196F3;
+            flex: 0.5;
+            min-width: 50px;
+        }
+
+        .game-card-button.edit:hover {
+            background-color: #0b7dda;
+        }
+
+        .game-card-button.delete {
+            background-color: #f44336;
+            flex: 0.5;
+            min-width: 50px;
+        }
+
+        .game-card-button.delete:hover {
+            background-color: #da190b;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-section h1 {
+            color: #1e3c72;
+            margin: 0;
+        }
+
+        .btn-add-game {
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .btn-add-game:hover {
+            background-color: #229954;
+        }
+    </style>
+
+    <div class="header-section">
+        <h1>
+            {% if busqueda %}
+                Resultados de búsqueda: "{{ nombre_busqueda }}"
+            {% else %}
+                Biblioteca de Videojuegos
+            {% endif %}
+        </h1>
+        {% if is_admin %}
+            <a href="/agregar-juego" class="btn-add-game">➕ Añadir Juego</a>
+        {% endif %}
+    </div>
+
+    <div class="games-container">
+        {% if juegos %}
+            {% for juego in juegos %}
+                <div class="game-card">
+                    <div class="game-card-image">
+                        <img src="/static/{{ juego[1] }}.PNG" alt="{{ juego[1] }}" onerror="this.src='/static/default-game.PNG'">
+                    </div>
+                    <div class="game-card-content">
+                        <div class="game-card-title">{{ juego[1] }}</div>
+                        <div class="game-card-description">
+                            <strong>Género:</strong> {{ juego[3] }}<br>
+                            <strong>Precio:</strong> {{ juego[2] }}€<br>
+                            <strong>Valoración:</strong> {{ juego[4] }}/10
+                        </div>
+                        {% if is_admin %}
+                            <div class="game-card-buttons">
+                                <form action="/editar-juego/{{ juego[0] }}" method="get" style="flex: 0.5; min-width: 50px;">
+                                    <button type="submit" class="game-card-button edit">✏️ Editar</button>
+                                </form>
+                                <form action="/borrar-juego" method="post" style="flex: 0.5; min-width: 50px;">
+                                    <input type="hidden" name="videojuego_id" value="{{ juego[0] }}">
+                                    <button type="submit" class="game-card-button delete" onclick="return confirm('¿Estás seguro de que deseas borrar este juego?');">🗑️ Borrar</button>
+                                </form>
+                            </div>
+                        {% else %}
+                            {% if request.session.get("usuario_id") %}
+                                <form action="/agregar-carrito" method="post" style="margin: 0;">
+                                    <input type="hidden" name="videojuego_id" value="{{ juego[0] }}">
+                                    <button type="submit" class="game-card-button">🛒 Comprar</button>
+                                </form>
+                            {% else %}
+                                <a href="/login" class="game-card-button" style="display: block; text-align: center; text-decoration: none; color: white;">🔐 Inicia Sesión</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #1e3c72; font-size: 1.2em; grid-column: 1/-1;">
+                {% if busqueda %}
+                    No se encontraron juegos que coincidan con tu búsqueda.
+                {% else %}
+                    No hay juegos disponibles aún.
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Xbox{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('/static/fondo-xbox.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        background-repeat: no-repeat !important;
+        min-height: 100vh !important;
+    }
+
+    .container {
+        background-image: url('/static/fondo-xbox.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        background-repeat: no-repeat !important;
+        background-color: transparent !important;
+        min-height: 100vh !important;
+        padding: 20px !important;
+    }
+
+    .xbox-header {
+        text-align: center;
+        margin-bottom: 30px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .xbox-header h1 {
+        font-size: 2.5em;
+        color: #107c10;
+        margin: 0;
+    }
+
+    .xbox-icon {
+        height: 60px;
+        width: 60px;
+        display: inline-block;
+        margin: 0 10px;
+        vertical-align: middle;
+    }
+
+    .xbox-content {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        margin-top: 20px;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    table th {
+        background-color: #107c10;
+        color: white;
+        padding: 12px;
+        font-weight: bold;
+    }
+
+    table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+        background-color: #e8f0ff;
+    }
+</style>
+
+<div class="container">
+    <div class="xbox-header">
+        <h1>
+            <img src="/static/icono-xbox.png" alt="Xbox" class="xbox-icon">
+            Xbox
+            <img src="/static/icono-xbox.png" alt="Xbox" class="xbox-icon">
+        </h1>
+    </div>
+
+    <div class="xbox-content">
+        <h2 style="text-align: center; color: #1e3c72;">Videojuegos Xbox</h2>
+        {% if request.session.get("es_admin") == 1 %}
+        <a href="/agregar-juego" style="display: inline-block; padding: 10px 15px; background-color: #107c10; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 15px;">+ Nuevo Videojuego</a>
+        {% endif %}
+        <br><br>
+
+        {% if juegos %}
+            <table border="1" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>Portada</th>
+                        {% if is_admin %}
+                        <th>ID</th>
+                        {% endif %}
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Género</th>
+                        <th>Valoración</th>
+                        <th>    </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for juego in juegos %}
+                    <tr>
+                        <td style="width: 80px; text-align: center;"><img src="/static/{{ juego[1] }}.PNG" alt="{{ juego[1] }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 3px;" onerror="this.src='/static/default-game.PNG'"></td>
+                        {% if is_admin %}
+                        <td>{{ juego[0] }}</td>
+                        {% endif %}
+                        <td>{{ juego[1] }}</td>
+                        <td>{{ juego[2] }}€</td>
+                        <td>{{ juego[3] }}</td>
+                        <td>{{ juego[4] }}/10</td>
+                        <td style="text-align: center;">
+                            {% if is_admin %}
+                                <form action="/editar-juego/{{ juego[0] }}" method="get" style="display: inline; margin: 0; padding: 0;">
+                                    <button type="submit" style="background-color: #2196F3; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 0.75em; margin-right: 3px; white-space: nowrap;">✏️ Editar</button>
+                                </form>
+                                <form action="/borrar-juego" method="post" style="display: inline; margin: 0; padding: 0;">
+                                    <input type="hidden" name="videojuego_id" value="{{ juego[0] }}">
+                                    <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 0.75em; white-space: nowrap;" onclick="return confirm('¿Estás seguro de que deseas borrar este juego?');">🗑️ Borrar</button>
+                                </form>
+                            {% else %}
+                                {% if request.session.get("usuario_id") %}
+                                    <form action="/agregar-carrito" method="post" style="display: inline; margin: 0; padding: 0;">
+                                        <input type="hidden" name="videojuego_id" value="{{ juego[0] }}">
+                                        <button type="submit" style="background-color: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 0.75em; white-space: nowrap;">🛒 Comprar</button>
+                                    </form>
+                                {% else %}
+                                    <a href="/login" style="background-color: #667eea; color: white; padding: 4px 8px; border-radius: 3px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 0.75em; white-space: nowrap;">🔐 Login</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center; color: #1e3c72; font-size: 1.1em;">No hay juegos de Xbox disponibles.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

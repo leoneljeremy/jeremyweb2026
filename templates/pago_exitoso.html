@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Pago Completado{% endblock %}
+
+{% block content %}
+<style>
+    .pago-exitoso-container {
+        max-width: 600px;
+        margin: 60px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+
+    .pago-exitoso-icono {
+        font-size: 4em;
+        margin-bottom: 20px;
+        animation: bounce 0.6s ease-in-out;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .pago-exitoso-titulo {
+        color: #4CAF50;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .pago-exitoso-subtitulo {
+        color: #666;
+        font-size: 1.1em;
+        margin-bottom: 30px;
+    }
+
+    .pago-exitoso-detalles {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 30px;
+        border-left: 4px solid #4CAF50;
+        text-align: left;
+    }
+
+    .detalle-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .detalle-item:last-child {
+        border-bottom: none;
+    }
+
+    .detalle-label {
+        color: #1e3c72;
+        font-weight: bold;
+    }
+
+    .detalle-valor {
+        color: #666;
+    }
+
+    .pago-exitoso-numero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+    }
+
+    .pago-exitoso-numero-label {
+        font-size: 0.8em;
+        opacity: 0.8;
+    }
+
+    .pago-exitoso-numero-valor {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    .pago-exitoso-acciones {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+
+    .btn-inicio {
+        background-color: #667eea;
+        color: white;
+    }
+
+    .btn-inicio:hover {
+        background-color: #5568d3;
+    }
+
+    .btn-descargar {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-descargar:hover {
+        background-color: #45a049;
+    }
+
+    .pago-exitoso-mensaje {
+        background-color: #e8f5e9;
+        border-left: 4px solid #4CAF50;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        color: #2e7d32;
+    }
+
+    @media (max-width: 600px) {
+        .pago-exitoso-acciones {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="pago-exitoso-container">
+    <div class="pago-exitoso-icono">✅</div>
+    
+    <h1 class="pago-exitoso-titulo">¡Pago Completado!</h1>
+    <p class="pago-exitoso-subtitulo">Tu compra ha sido procesada exitosamente</p>
+
+    <div class="pago-exitoso-mensaje">
+        <strong>Gracias por tu compra, {{ usuario_nombre }}!</strong> Pronto recibirás un correo electrónico con los detalles de tu pedido.
+    </div>
+
+    <div class="pago-exitoso-detalles">
+        <h3 style="margin-top: 0; color: #1e3c72;">Detalles del Pedido</h3>
+        
+        <div class="detalle-item">
+            <span class="detalle-label">Número de Pedido:</span>
+            <span class="detalle-valor">ORD-{{ "%010d"|format(range(1000000, 9999999)|random) }}</span>
+        </div>
+        
+        <div class="detalle-item">
+            <span class="detalle-label">Método de Pago:</span>
+            <span class="detalle-valor">
+                {% if metodo_pago == "tarjeta" %}
+                    Tarjeta de Crédito/Débito
+                {% else %}
+                    Otras Formas de Pago
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="detalle-item">
+            <span class="detalle-label">Estado:</span>
+            <span class="detalle-valor" style="color: #4CAF50; font-weight: bold;">✓ Procesado</span>
+        </div>
+        
+        <div class="detalle-item">
+            <span class="detalle-label">Fecha:</span>
+            <span class="detalle-valor">{{ fecha_pago }}</span>
+        </div>
+    </div>
+
+    <div class="pago-exitoso-numero">
+        <div class="pago-exitoso-numero-label">Número de Confirmación</div>
+        <div class="pago-exitoso-numero-valor">{{ "%015d"|format(range(100000000000000, 999999999999999)|random) }}</div>
+    </div>
+
+    <p style="color: #666; font-size: 0.95em; margin-bottom: 30px;">
+        En breve nos pondremos en contacto contigo para confirmar los detalles de la entrega de tus juegos digitales.
+    </p>
+
+    <div class="pago-exitoso-acciones">
+        <a href="/videojuegos" class="btn btn-inicio">🎮 Continuar Comprando</a>
+        <a href="/carrito" class="btn btn-descargar">📋 Ver Pedidos</a>
+    </div>
+</div>
+
+{% endblock %}

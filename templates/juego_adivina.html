@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Juego{% endblock %}
+
+{% block content %}
+    <h1>Adivina el Número</h1>
+    
+    {% if juego_ganado %}
+        <p style="color: white;">¡Ganaste! El número era {{ numero_secreto }}</p>
+        <p style="color: white;">Lo adivinaste en {{ intentos|length }} intentos</p>
+        <a href="/juego_adivina/reiniciar" style="display: inline-block; padding: 10px 20px; background-color: #1e3c72; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">Jugar de Nuevo</a>
+    {% elif juego_perdido %}
+        <p style="color: white;">Game Over. El número era {{ numero_secreto }}</p>
+        <p style="color: white;">Usaste los 10 intentos permitidos</p>
+        <a href="/juego_adivina/reiniciar" style="display: inline-block; padding: 10px 20px; background-color: #1e3c72; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">Jugar de Nuevo</a>
+    {% else %}
+        <form method="POST">
+            {% if mensaje %}
+                <p style="color: #1e3c72;">{{ mensaje }}</p>
+            {% endif %}
+            <input type="number" name="numero" id="numero" min="1" max="100" required placeholder="Ingresa un número entre 1 y 100">
+            <button type="submit">Intentar</button>
+        </form>
+    {% endif %}
+{% endblock %}
+
+
+
