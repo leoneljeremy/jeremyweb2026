@@ -12,4 +12,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando para ejecutar tu servidor (ejemplo con Gunicorn o Uvicorn)
-CMD ["python", "app.py"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
